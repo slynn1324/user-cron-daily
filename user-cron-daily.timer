@@ -1,0 +1,10 @@
+[Unit]
+Description=User cron.daily.  Run scripts in ~/.local/cron.daily every day at 2 am and ~/.local/cron.weekly every Sunday at 2 am
+Requires=user-cron-daily.service
+
+[Timer]
+Unit=user-cron-daily.service
+OnCalendar=*-*-* 2:00:00
+
+[Install]
+WantedBy=timers.target
