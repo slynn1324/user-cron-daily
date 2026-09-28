@@ -1,6 +1,6 @@
 # user-cron-daily
 
-A shell script and systemd service and timer files that enable the creation of ~/.local/cron.daily and ~/.local/cron.weekly directories.  The primary advantages are that logs get tagged with transient systemd units and can be accessed via journalctl clearly.
+A shell script and systemd service and timer files that enable the creation of a ~/.local/cron.daily directory.  The primary advantages are that logs get tagged with transient systemd units and can be accessed via journalctl clearly.
 
 The scripts selected must match the default run-parts rule. On Debian, run-parts will include a file if:
 
@@ -12,6 +12,20 @@ The scripts selected must match the default run-parts rule. On Debian, run-parts
 ```
 journalctl --user -u user-cron-daily@<script-name> [ --since "1 day ago" ]
 ```
+# running weekly / less than every day
+
+in short, early-exit your script.
+
+e.g.
+```
+# only run on sundays
+day=$(date +%w)
+if [ "$day" -ne 0 ]; then
+    echo "not sunday, skipping."
+    exit 0
+fi
+```
+
 
 # install
 ```
@@ -23,6 +37,10 @@ cp user-cron-daily.sh ~/.local/bin/user-cron-daily
 
 systemctl --user daemon-reload
 systemctl --user enable user-cron-daily.timer
+
+mkdir -p ~/.local/cron.daily
+touch ~/.local/cron.daily/env.vars
+touch ~/.local/cron.daily/user-cron-daily.conf
 ```
 
 
